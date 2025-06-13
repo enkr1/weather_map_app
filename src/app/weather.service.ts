@@ -2,25 +2,45 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, Observable, map } from 'rxjs';
 
+
+
 export interface StationWeather {
-  currentTemp: number;
-  currentWindSpeed: number;
-  windDirection: number;
-  sg2hForecast: string;
-  lastUpdateTime: string;
 
-  // Add for charts and dashboard
-  // Daily
-  dailyTempMax?: number[];
-  dailyTempMin?: number[];
-  dailyLabels?: string[]; // e.g. ["2025-06-14", "2025-06-15", ...]
+  // Meta
+  latitude: number;
+  longitude: number;
+  generationtimeMs: number;
+  utcOffsetSeconds: number;
+  timezone: string;
+  timezoneAbbreviation: string;
+  elevation: number;
 
-  // Hourly
-  hourlyTemps?: number[];
-  hourlyWinds?: number[];
-  hourlyTimes?: string[];
-  hourlyHumidity?: number[];
-  hourlyDirectRadiation?: number[];
+  // Current
+  current?: {
+    time: string;             // "2025-06-13T16:45"
+    interval: number;        // seconds
+    temperature: number;      // °C
+    windspeed: number;        // km/h
+    winddirection: number;    // degrees
+    isDay: boolean;           // true/false
+    weathercode: number;      // WMO code (for icon/description)
+  };
+
+  // Units for UI
+  units: {
+    temp: string;
+    windspeed: string;
+    winddirection: string;
+    // add as needed
+  };
+
+  // Hourly for charts
+  hourly: {
+    time: string;
+    temperature2m: number[];
+    windSpeed10m: number[];
+  };
+
 }
 
 @Injectable({ providedIn: 'root' })
@@ -52,25 +72,37 @@ export class WeatherService {
       .get<any>(meteoUrl)
       .pipe(
         map(res => {
-          const cw = res.current_weather || {};
-          console.debug(`[WeatherService] cw`, cw);
+          console.debug(`[WeatherService] res`, res);
+
           return {
-            // Current
-            currentTemp: cw.temperature ?? null,
-            currentWindSpeed: cw.windspeed ?? null,
-            windDirection: cw.winddirection ?? null,
-            lastUpdateTime: cw.time ?? '',
-            // Hourly fields
-            hourlyTemps: res.hourly?.temperature_2m ?? [],
-            hourlyTimes: res.hourly?.time ?? [],
-            hourlyWinds: res.hourly?.wind_speed_10m ?? [],
-            hourlyHumidity: res.hourly?.relativehumidity_2m ?? [],
-            hourlyDirectRadiation: res.hourly?.direct_radiation ?? [],
-            // Daily fields
-            dailyTempMax: res.daily?.temperature_2m_max ?? [],
-            dailyTempMin: res.daily?.temperature_2m_min ?? [],
-            dailyLabels: res.daily?.time ?? [],
+            latitude: res.latitude,
+            longitude: res.longitude,
+            generationtimeMs: res.generationtime_ms,
+            utcOffsetSeconds: res.utc_offset_seconds,
+            timezone: res.timezone,
+            timezoneAbbreviation: res.timezone_abbreviation,
+            elevation: res.elevation,
+            current: {
+              time: res.current_weather?.time,
+              interval: res.current_weather?.interval,
+              temperature: res.current_weather?.temperature,
+              windspeed: res.current_weather?.windspeed,
+              winddirection: res.current_weather?.winddirection,
+              isDay: !!res.current_weather?.is_day,
+              weathercode: res.current_weather?.weathercode,
+            },
+            hourly: {
+              time: res.hourly?.time ?? [],
+              temperature2m: res.hourly?.temperature_2m ?? [],
+              windSpeed10m: res.hourly?.wind_speed_10m ?? [],
+            },
+            units: {
+              temp: res.current_weather_units?.temperature || '°C',
+              windspeed: res.current_weather_units?.windspeed || 'km/h',
+              winddirection: res.current_weather_units?.winddirection || '°',
+            },
           };
+
         })
       );
 

@@ -7,7 +7,10 @@ import { StationWeather } from './weather.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-<div class="modal-content">
+
+
+
+<div class="modal-content" tabindex="0" aria-modal="true" role="dialog">
   <header class="modal-header">
     <h2>{{ name }}</h2>
     <button class="close-btn" (click)="closeModal.emit()" aria-label="Close">&times;</button>
@@ -17,26 +20,21 @@ import { StationWeather } from './weather.service';
     <div class="modal-summary">
       <div class="modal-item">
         <span class="modal-label">🌡️ Temp</span>
-        <span class="modal-value">{{ data.currentTemp }} °C</span>
+        <span class="modal-value">{{ data.current?.temperature }} °C</span>
       </div>
       <div class="modal-item">
         <span class="modal-label">💨 Wind</span>
-        <span class="modal-value">{{ data.currentWindSpeed }} m/s</span>
+        <span class="modal-value">{{ data.current?.windspeed }} km/h</span>
       </div>
       <div class="modal-item">
         <span class="modal-label">🧭 Direction</span>
-        <span class="modal-value">{{ data.windDirection }}°</span>
+        <span class="modal-value">{{ data.current?.winddirection }}°</span>
       </div>
-      <div class="modal-item">
-        <span class="modal-label">📍 Forecast</span>
-        <span class="modal-value">{{ data.sg2hForecast }}</span>
-      </div>
-      <div class="modal-item" *ngIf="data.lastUpdateTime">
+      <div class="modal-item" *ngIf="data.current?.time">
         <span class="modal-label">🕒 Updated</span>
-        <span class="modal-value">{{ data.lastUpdateTime | date:'short' }}</span>
+        <span class="modal-value">{{ data.current?.time | date:'short' }}</span>
       </div>
     </div>
-
     <hr>
     <details>
       <summary>Debug: Full Weather Data</summary>
@@ -50,6 +48,8 @@ import { StationWeather } from './weather.service';
     </div>
   </ng-template>
 </div>
+
+
 
   `,
 })
