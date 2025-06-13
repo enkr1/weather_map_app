@@ -58,9 +58,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.clearMap();
 
     this.map = L.map('map').setView([1.3521, 103.8198], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(this.map);
+    L
+      .tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      })
+      .addTo(this.map);
     L.Icon.Default.imagePath = 'assets/leaflet/';
     L.Icon.Default.mergeOptions({
       iconUrl: 'marker-icon.png',

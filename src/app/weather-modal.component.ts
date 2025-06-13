@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StationWeather } from './weather.service';
 
@@ -7,33 +7,63 @@ import { StationWeather } from './weather.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="modal-backdrop" (click)="close()"></div>
-    <div class="modal">
-      <h2>{{ name }}</h2>
-      <p>🌡️ Temp: {{ data.currentTemp }} °C</p>
-      <p>💨 Wind: {{ data.currentWindSpeed }} m/s</p>
-      <p>📅 Forecast: {{ data.sg2hForecast }}</p>
-      <button (click)="close()">Close</button>
+<div class="modal-content">
+  <header class="modal-header">
+    <h2>{{ name }}</h2>
+    <button class="close-btn" (click)="closeModal.emit()" aria-label="Close">&times;</button>
+  </header>
+
+  <section *ngIf="data; else noData">
+    <div class="modal-summary">
+      <div class="modal-item">
+        <span class="modal-label">🌡️ Temp</span>
+        <span class="modal-value">{{ data.currentTemp }} °C</span>
+      </div>
+      <div class="modal-item">
+        <span class="modal-label">💨 Wind</span>
+        <span class="modal-value">{{ data.currentWindSpeed }} m/s</span>
+      </div>
+      <div class="modal-item">
+        <span class="modal-label">🧭 Direction</span>
+        <span class="modal-value">{{ data.windDirection }}°</span>
+      </div>
+      <div class="modal-item">
+        <span class="modal-label">📍 Forecast</span>
+        <span class="modal-value">{{ data.sg2hForecast }}</span>
+      </div>
+      <div class="modal-item" *ngIf="data.lastUpdateTime">
+        <span class="modal-label">🕒 Updated</span>
+        <span class="modal-value">{{ data.lastUpdateTime | date:'short' }}</span>
+      </div>
     </div>
+
+    <hr>
+    <details>
+      <summary>Debug: Full Weather Data</summary>
+      <pre>{{ data | json }}</pre>
+    </details>
+  </section>
+
+  <ng-template #noData>
+    <div class="modal-empty">
+      <p>❗ No data available.</p>
+    </div>
+  </ng-template>
+</div>
+
   `,
-  styles: [`
-    .modal-backdrop {
-      position: fixed; top:0; left:0; right:0; bottom:0;
-      background: rgba(0,0,0,0.5);
-    }
-    .modal {
-      position: fixed; background: #fff; padding: 1em;
-      top:50%; left:50%; transform:translate(-50%,-50%);
-      border-radius: 8px; box-shadow:0 2px 10px rgba(0,0,0,0.3);
-    }
-  `]
 })
-export class WeatherModalComponent {
-  @Input() name!: string;
-  @Input() data!: StationWeather;
+
+
+export class WeatherModalComponent implements OnChanges {
+  @Input() name = '';
+  @Input() data?: StationWeather;
   @Output() closeModal = new EventEmitter<void>();
 
-  close() {
-    this.closeModal.emit();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['data'] && this.data) {
+      console.debug('[WeatherModal] Input data:', this.data);
+    }
   }
+
 }

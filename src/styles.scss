@@ -2,3 +2,147 @@ body {
   padding: 0;
   margin: 0;
 }
+
+.loading-overlay {
+  position: absolute;
+  z-index: 999;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all .3s ease-in-out;
+  background: rgba(255, 255, 255, 0.1);
+  top: 0;
+  left: 0;
+  backdrop-filter: blur(.1rem);
+}
+
+// app-weather-modal {
+//   position: absolute;
+//   top: 1rem;
+//   right: 1rem;
+//   background: rgba(255, 255, 255, 0.3);
+//   backdrop-filter: blur(.3rem);
+//   padding: 1rem 1rem;
+//   border-radius: 1rem;
+//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+//   z-index: 999;
+//   max-width: 320px;
+//   width: 100%;
+//
+//   .modal {
+//     padding: 0;
+//     border: 1px solid red;
+//
+//     h2 {
+//       margin: 0;
+//     }
+//   }
+// }
+
+app-weather-modal {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 999;
+  max-width: 360px;
+  width: 100%;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(.6rem);
+  border-radius: 1.2rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+
+  .modal-content {
+    padding: 1.2rem 1.2rem 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e2e2e2;
+    margin-bottom: .5rem;
+
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 .3rem;
+      color: #222;
+      transition: color .15s;
+      &:hover {
+        color: #e74c3c;
+      }
+    }
+  }
+
+  .modal-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem 0.8rem;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+
+    .modal-item {
+      display: flex;
+      flex-direction: column;
+      background: #f7fafd;
+      border-radius: 0.6rem;
+      padding: .4rem .7rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+
+      .modal-label {
+        font-size: .87em;
+        color: #607d8b;
+      }
+      .modal-value {
+        font-size: 1.1em;
+        font-weight: 500;
+        color: #222;
+      }
+    }
+  }
+
+  .modal-empty {
+    color: #9c1c1c;
+    text-align: center;
+    font-size: 1.1rem;
+    padding: 1rem 0;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: .7rem 0;
+  }
+
+  details {
+    font-size: 0.89rem;
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+      margin-bottom: .3rem;
+    }
+    pre {
+      background: #fcfcfc;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      max-height: 200px;
+      overflow: auto;
+      font-size: 0.88em;
+      margin: 0;
+    }
+  }
+}

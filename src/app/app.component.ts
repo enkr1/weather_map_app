@@ -14,19 +14,23 @@ import { Station } from './stations';
     WeatherModalComponent,
   ],
   template: `
-    <app-map
-      (stationClicked)="onMarkerClick($event)"
-    ></app-map>
+  <div style="position: relative;">
+    <app-map (stationClicked)="onMarkerClick($event)"></app-map>
 
-    <div *ngIf="weatherLoading">Loading…</div>
+    <!-- Loading overlay -->
+    <div *ngIf="weatherLoading" class="loading-overlay">
+      Loading..
+    </div>
 
-    <app-weather-modal
-      *ngIf="weatherData"
-      [name]="weatherData.name"
-      [data]="weatherData"
-      (closeModal)="weatherData = undefined">
-    </app-weather-modal>
-
+    <div class="weather-modal">
+      <app-weather-modal
+        *ngIf="weatherData"
+        [name]="weatherData.name"
+        [data]="weatherData"
+        (closeModal)="weatherData = undefined">
+      </app-weather-modal>
+    </div>
+  </div>
   `
 })
 export class AppComponent {
@@ -39,19 +43,19 @@ export class AppComponent {
     console.debug('[App] Marker clicked:', station);
 
     this.weatherLoading = true;
-    this.weatherService
-      .fetchStationWeather(station.lat, station.lng, station.name)
+    console.debug('[App] weatherLoading =', this.weatherLoading);
+
+    this.weatherService.fetchStationWeather(station.lat, station.lng, station.name)
       .subscribe({
         next: data => {
-          console.debug('[App] Weather data received for', station.name, data);
           this.weatherData = { name: station.name, ...data };
         },
         error: err => {
           console.error('[App] Error fetching weather:', err);
-          // Optionally display an error modal or toast
         },
         complete: () => {
           this.weatherLoading = false;
+          console.debug('[App] weatherLoading =', this.weatherLoading);
         }
       });
   }
