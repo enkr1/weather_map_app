@@ -10,6 +10,13 @@ export interface TwoHourForecastItem {
 }
 
 export interface TwoHourForecastResponse {
+  area_metadata: Array<{
+    name: string;
+    label_location: {
+      latitude: number;
+      longitude: number;
+    };
+  }>,
   items: Array<{
     update_timestamp: string;
     timestamp: string;
@@ -72,6 +79,19 @@ export class ForecastCacheService {
           validEnd: item.valid_period.end
         };
       }),
+      shareReplay(1)
+    );
+  }
+
+  get areaMetadata$(): Observable<{ name: string; lat: number; lng: number }[]> {
+    return this.all$.pipe(
+      map(res =>
+        res.area_metadata.map(a => ({
+          name: a.name,
+          lat: a.label_location.latitude,
+          lng: a.label_location.longitude
+        }))
+      ),
       shareReplay(1)
     );
   }

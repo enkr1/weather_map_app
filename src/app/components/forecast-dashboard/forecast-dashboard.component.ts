@@ -1,43 +1,58 @@
 import { Component } from '@angular/core';
-import { CommonModule, AsyncPipe } from '@angular/common';
-import { map } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
 import { ForecastCacheService } from '../../services/forecast-cache.service';
+import { combineLatest, map } from 'rxjs';
+
 
 @Component({
   selector: 'app-forecast-dashboard',
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="forecast-dashboard" *ngIf="metadata$ | async as md">
-      <div><strong>Last Updated:</strong> {{ md.updateTimestamp | date:'short' }}</div>
-      <div><strong>Data Timestamp:</strong> {{ md.timestamp       | date:'short' }}</div>
+    <div class="frosted-container forecast-dashboard" *ngIf="vm$ | async as vm">
+      <div><strong>Last Updated:</strong> {{ vm.md.updateTimestamp | date:'short' }}</div>
+      <div><strong>Data Timestamp:</strong> {{ vm.md.timestamp | date:'short' }}</div>
       <div>
         <strong>Valid Period:</strong>
-        {{ md.validStart | date:'shortTime' }} –
-        {{ md.validEnd   | date:'shortTime' }}
+        {{ vm.md.validStart | date:'shortTime' }} – {{ vm.md.validEnd | date:'shortTime' }}
       </div>
+      <div><strong>Areas Loaded:</strong> {{ vm.areas }} locations</div>
+      <div><strong>Forecasts:</strong> {{ vm.forecasts }} entries</div>
     </div>
   `,
   styles: [`
     .forecast-dashboard {
       position: absolute;
       top: 1rem;
-      left: 1rem;
-      background: rgba(255,255,255,0.85);
+      left: 4rem;
       padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       font-size: 0.9rem;
       z-index: 1001;
-      line-height: 1.4;
+      line-height: 1.6;
     }
   `]
 })
+
 export class ForecastDashboardComponent {
   metadata$;
+  vm$;
 
   constructor(private forecastCache: ForecastCacheService) {
+    this.forecastCache = this.forecastCache;
     this.metadata$ = this.forecastCache.metadata$;
+    this.vm$ = combineLatest([
+      this.forecastCache.metadata$,
+      this.forecastCache.areaMetadata$,
+      this.forecastCache.all$
+    ]).pipe(
+      // Map to a convenient view model:
+      map(([md, areas, full]) => ({
+        md,
+        areas: areas.length,
+        forecasts: full.items[0]?.forecasts?.length || 0
+      }))
+    );
+
   }
 
 }

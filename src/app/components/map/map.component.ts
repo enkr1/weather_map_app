@@ -8,7 +8,7 @@ import {
   EventEmitter
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { stations, Station } from '../../models/station';
+import { Station } from '../../models/station';
 import { firstValueFrom } from 'rxjs';
 import { ForecastCacheService } from '../../services/forecast-cache.service';
 
@@ -26,10 +26,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private cache: ForecastCacheService,
+    private forecastCache: ForecastCacheService,
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
+
+
+
 
   ngOnDestroy() {
     this.clearMap();
@@ -63,11 +66,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // Thorough cleanup before initialisation
     this.clearMap();
 
-    this.map = L.map('map').setView([1.3521, 103.8198], 13);
+    this.map = L.map('map').setView([1.3521, 103.8198], 11);
     L
-      .tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-      })
+      .tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+          attribution: '&copy; OpenStreetMap contributors'
+        }
+      )
       .addTo(this.map);
     L.Icon.Default.imagePath = 'assets/leaflet/';
     L.Icon.Default.mergeOptions({
@@ -77,6 +83,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
 
     const cluster = L.markerClusterGroup();
+
+    // Preloaded data
+    const stations = await firstValueFrom(this.forecastCache.areaMetadata$);
 
     stations.forEach(s => {
       const marker = L

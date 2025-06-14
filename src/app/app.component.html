@@ -13,7 +13,11 @@
 
   <app-forecast-dashboard></app-forecast-dashboard>
 
-  <app-weather-modal *ngIf="weatherData" [name]="weatherData.name" [data]="weatherData"
+  <app-weather-modal
+    *ngIf="weatherData"
+    [name]="weatherData.name"
+    [data]="weatherData"
+    [ngClass]="'frosted-container'"
     (closeModal)="weatherData = undefined">
   </app-weather-modal>
 
