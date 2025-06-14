@@ -52,17 +52,36 @@ export class WeatherModalComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['data'] && this.data?.hourly) {
-      const temps = this.data.hourly.temperature2m ?? [];
       const times = this.data.hourly.time ?? [];
+      const temps = this.data.hourly.temperature2m ?? [];
 
-      const limit = 24;
-      const slicedTemps = temps.slice(-limit);
-      const slicedTimes = times.slice(-limit);
-      // const prettyTimes = slicedTimes.map(t => t.substring(11, 16)); // "16:00"
+      // Define boundaries
+      const now = new Date();
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
 
-      this.lineChartData.datasets[0].data = slicedTemps;
-      this.lineChartData.labels = slicedTimes;
-      // this.lineChartData.labels = prettyTimes;
+      const end = new Date(now);
+      end.setDate(now.getDate() + 1); // tomorrow
+      end.setHours(23, 59, 59, 999);
+
+      console.debug('[DEBUG] Start:', start.toISOString());
+      console.debug('[DEBUG] End:', end.toISOString());
+      start.setHours(0, 0, 0, 0);
+
+      const filteredTimes = times.filter((iso) => {
+        const t = new Date(iso);
+        return t >= start && t <= end;
+      });
+      // Safe indices:
+      const startIdx = times.indexOf(filteredTimes[0]!);
+      const endIdx = times.indexOf(filteredTimes[filteredTimes.length - 1]!);
+
+      // Slice safely:
+      const filteredTemps = temps.slice(startIdx, endIdx + 1);
+
+      this.lineChartData.labels = filteredTimes.map(iso => iso.slice(11, 16)); // "HH:MM"
+      this.lineChartData.datasets[0].data = filteredTemps;
+
 
       this.chart?.update();
     }
