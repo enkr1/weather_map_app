@@ -13,7 +13,6 @@ import { BaseChartDirective } from 'ng2-charts';
   ],
   templateUrl: `./weather-modal.component.html`,
   styleUrl: './weather-modal.component.scss',
-  // styleUrls: ['./weather-modal.component.scss'],
 })
 
 
@@ -50,13 +49,21 @@ export class WeatherModalComponent implements OnChanges {
     }]
   };
 
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes['data'] && this.data?.hourly) {
-      // 1️⃣ set correct labels (time strings) :contentReference[oaicite:3]{index=3}
-      this.lineChartData.labels = this.data.hourly.time;
-      // 2️⃣ set correct data (temperature values)
-      this.lineChartData.datasets[0].data = this.data.hourly.temperature2m;
-      // 3️⃣ tell Chart to re-render :contentReference[oaicite:4]{index=4}
+      const temps = this.data.hourly.temperature2m ?? [];
+      const times = this.data.hourly.time ?? [];
+
+      const limit = 24;
+      const slicedTemps = temps.slice(-limit);
+      const slicedTimes = times.slice(-limit);
+      // const prettyTimes = slicedTimes.map(t => t.substring(11, 16)); // "16:00"
+
+      this.lineChartData.datasets[0].data = slicedTemps;
+      this.lineChartData.labels = slicedTimes;
+      // this.lineChartData.labels = prettyTimes;
+
       this.chart?.update();
     }
   }

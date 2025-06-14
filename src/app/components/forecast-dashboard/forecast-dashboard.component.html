@@ -1,0 +1,109 @@
+<div class="frosted-container forecast-dashboard" *ngIf="vm$ | async as vm">
+
+  <!-- Enhanced Header with Gradient -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="status-section">
+        <div class="status-indicator"></div>
+        <div class="status-text">Live</div>
+      </div>
+      <div class="title-section">
+        <h3 class="dashboard-title">
+          <span class="title-icon">🌤️</span>
+          Forecast Dashboard
+        </h3>
+        <p class="dashboard-subtitle">Real-time weather intelligence</p>
+      </div>
+    </div>
+    <div class="header-decoration"></div>
+  </div>
+
+  <!-- Enhanced Main Info with Cards -->
+  <div class="info-grid">
+    <div class="info-card primary-card">
+      <div class="card-header">
+        <span class="card-icon">🕒</span>
+        <span class="card-title">Last Updated</span>
+      </div>
+      <div class="card-content">
+        <div class="primary-value">{{ vm.md.updateTimestamp | date:'short' }}</div>
+        <div class="update-indicator">Just now</div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="card-header">
+        <span class="card-icon">📊</span>
+        <span class="card-title">Data Source</span>
+      </div>
+      <div class="card-content">
+        <div class="card-value">{{ vm.md.timestamp | date:'short' }}</div>
+        <div class="data-quality">High Quality</div>
+      </div>
+    </div>
+
+    <div class="info-card time-card">
+      <div class="card-header">
+        <span class="card-icon">⏰</span>
+        <span class="card-title">Valid Period</span>
+      </div>
+      <div class="card-content">
+        <div class="time-range">
+          <div class="time-block">
+            <span class="time-label">From</span>
+            <span class="time-value">{{ vm.md.validStart | date:'shortTime' }}</span>
+          </div>
+          <div class="time-separator">→</div>
+          <div class="time-block">
+            <span class="time-label">To</span>
+            <span class="time-value">{{ vm.md.validEnd | date:'shortTime' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Stats with Progress Indicators -->
+  <div class="stats-section">
+    <div class="stats-header">
+      <h4 class="stats-title">Coverage Overview</h4>
+      <div class="stats-badge">Active</div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card areas-stat">
+        <div class="stat-icon">🗺️</div>
+        <div class="stat-content">
+          <span class="stat-number">{{ vm.areas }}</span>
+          <span class="stat-label">Areas Covered</span>
+          <div class="stat-progress">
+            <div class="progress-bar" [style.width]="(vm.areas / 47 * 100) + '%'"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card forecasts-stat">
+        <div class="stat-icon">📈</div>
+        <div class="stat-content">
+          <span class="stat-number">{{ vm.forecasts }}</span>
+          <span class="stat-label">Active Forecasts</span>
+          <div class="stat-progress">
+            <div class="progress-bar" [style.width]="(vm.forecasts / 24 * 100) + '%'"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Quick Actions Section -->
+  <div class="quick-actions">
+    <button class="action-btn refresh-btn" title="Refresh Data">
+      <span class="btn-icon">🔄</span>
+      <span class="btn-text">Refresh</span>
+    </button>
+    <button class="action-btn settings-btn" title="Settings">
+      <span class="btn-icon">⚙️</span>
+      <span class="btn-text">Settings</span>
+    </button>
+  </div>
+
+</div>

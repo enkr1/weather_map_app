@@ -8,29 +8,8 @@ import { combineLatest, map } from 'rxjs';
   selector: 'app-forecast-dashboard',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="frosted-container forecast-dashboard" *ngIf="vm$ | async as vm">
-      <div><strong>Last Updated:</strong> {{ vm.md.updateTimestamp | date:'short' }}</div>
-      <div><strong>Data Timestamp:</strong> {{ vm.md.timestamp | date:'short' }}</div>
-      <div>
-        <strong>Valid Period:</strong>
-        {{ vm.md.validStart | date:'shortTime' }} – {{ vm.md.validEnd | date:'shortTime' }}
-      </div>
-      <div><strong>Areas Loaded:</strong> {{ vm.areas }} locations</div>
-      <div><strong>Forecasts:</strong> {{ vm.forecasts }} entries</div>
-    </div>
-  `,
-  styles: [`
-    .forecast-dashboard {
-      position: absolute;
-      top: 1rem;
-      left: 4rem;
-      padding: 0.75rem 1rem;
-      font-size: 0.9rem;
-      z-index: 1001;
-      line-height: 1.6;
-    }
-  `]
+  templateUrl: './forecast-dashboard.component.html',
+  styleUrl: './forecast-dashboard.component.scss',
 })
 
 export class ForecastDashboardComponent {
