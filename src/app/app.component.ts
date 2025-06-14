@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { WeatherService, StationWeather } from './weather.service';
-import { MapComponent } from './map/map.component';
-import { WeatherModalComponent } from './weather-modal.component';
-import { Station } from './stations';
+import { WeatherService, StationWeather } from './services/weather.service';
+import { MapComponent } from './components/map/map.component';
+import { WeatherModalComponent } from './components/weather-modal/weather-modal.component';
+import { Station } from './models/station';
+import { ForecastDashboardComponent } from './components/forecast-dashboard/forecast-dashboard.component';
 
 @Component({
   selector: 'app-root',
@@ -12,27 +13,13 @@ import { Station } from './stations';
     CommonModule,
     MapComponent,
     WeatherModalComponent,
+    ForecastDashboardComponent,
   ],
-  template: `
-  <div style="position: relative;">
-    <app-map (stationClicked)="onMarkerClick($event)"></app-map>
-
-    <!-- Loading overlay -->
-    <div *ngIf="weatherLoading" class="loading-overlay">
-      Loading..
-    </div>
-
-    <div class="weather-modal">
-      <app-weather-modal
-        *ngIf="weatherData"
-        [name]="weatherData.name"
-        [data]="weatherData"
-        (closeModal)="weatherData = undefined">
-      </app-weather-modal>
-    </div>
-  </div>
-  `
+  templateUrl: "./app.component.html",
 })
+
+
+
 export class AppComponent {
   weatherData?: StationWeather & { name: string };
   weatherLoading: boolean = false;
@@ -45,7 +32,12 @@ export class AppComponent {
     this.weatherLoading = true;
     console.debug('[App] weatherLoading =', this.weatherLoading);
 
-    this.weatherService.fetchStationWeather(station.lat, station.lng, station.name)
+    this.weatherService
+      .fetchStationWeather(
+        station.lat,
+        station.lng,
+        station.name
+      )
       .subscribe({
         next: data => {
           this.weatherData = { name: station.name, ...data };

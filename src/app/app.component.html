@@ -1,5 +1,22 @@
-<router-outlet></router-outlet>
+<div style="position: relative;">
 
-<div class="map-container">
-  <div *ngIf="isBrowser" id="map"></div>
+
+
+  <app-map (stationClicked)="onMarkerClick($event)"></app-map>
+
+
+
+  <!-- Loading overlay -->
+  <div *ngIf="weatherLoading" class="loading-overlay">
+    Loading..
+  </div>
+
+  <app-forecast-dashboard></app-forecast-dashboard>
+
+  <app-weather-modal *ngIf="weatherData" [name]="weatherData.name" [data]="weatherData"
+    (closeModal)="weatherData = undefined">
+  </app-weather-modal>
+
+
+
 </div>

@@ -4,7 +4,7 @@ export const routes: Routes = [
   {
     path: 'map',
     loadComponent: () =>
-      import('./map/map.component').then(m => m.MapComponent)
+      import('./components/map/map.component').then(m => m.MapComponent)
   },
   { path: '', redirectTo: 'map', pathMatch: 'full' }
 

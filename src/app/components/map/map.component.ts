@@ -8,7 +8,9 @@ import {
   EventEmitter
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { stations, Station } from '../stations';
+import { stations, Station } from '../../models/station';
+import { firstValueFrom } from 'rxjs';
+import { ForecastCacheService } from '../../services/forecast-cache.service';
 
 @Component({
   selector: 'app-map',
@@ -22,7 +24,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   @Output() stationClicked = new EventEmitter<Station>();
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private cache: ForecastCacheService,
+  ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
@@ -48,6 +53,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       }
     }
   }
+
   private async loadAndInitMap() {
     const L = await import('leaflet');
     (globalThis as any).L = L; // Makes L global for the plugin
@@ -73,11 +79,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     const cluster = L.markerClusterGroup();
 
     stations.forEach(s => {
-      const marker = L.marker([s.lat, s.lng])
-        .bindPopup(`<p>V2: ${s.name}</p>`)
+      const marker = L
+        .marker([s.lat, s.lng])
+        .bindPopup(`<p>${s.name}</p>`)
         .on('click', () => this.stationClicked.emit(s));
       cluster.addLayer(marker);
     });
+
 
     this.map.addLayer(cluster);
   }

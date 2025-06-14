@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 body {
   padding: 0;
   margin: 0;
+  font-family: 'Inter', sans-serif;
 }
 
 .loading-overlay {
@@ -18,115 +21,20 @@ body {
   backdrop-filter: blur(.1rem);
 }
 
+/* Modal Container */
 app-weather-modal {
   position: absolute;
-  top: 1rem;
+  top: 1.3rem;
   right: 1rem;
   z-index: 999;
-  max-width: 360px;
   width: 100%;
+  max-width: 50vw;
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(.3rem);
-  padding: 2rem;
-  border-radius: 1.2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-
-  .modal-content {
-    border: 1px solid red;
-  }
-
-  .modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    h2 {
-      font-size: 1.3rem;
-      margin: 0;
-      flex: 1;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-    }
-
-    .close-btn {
-      font-size: 1.7rem;
-      line-height: 1;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0 .5rem;
-      margin-left: 1rem;
-      color: #444;
-      border-radius: 50%;
-      transition: background 0.1s;
-
-      &:hover,
-      &:focus {
-        background: #eee;
-        color: #111;
-      }
-    }
-  }
-
-  .modal-summary {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: .5rem 1.2rem;
-    margin: 1rem 0;
-  }
-
-  .modal-item {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-
-    .modal-label {
-      font-size: 0.93rem;
-      color: #666;
-    }
-
-    .modal-value {
-      font-size: 1.14rem;
-      font-weight: 500;
-      color: #222;
-    }
-  }
-
-  hr {
-    margin: 1.2rem 0 .7rem 0;
-    border: none;
-    border-top: 1px solid #eee;
-  }
-
-  .modal-empty {
-    text-align: center;
-    color: #999;
-    font-size: 1.2rem;
-    padding: 2rem 0 1rem 0;
-  }
-
-  details {
-    margin-top: 0.8rem;
-
-    summary {
-      cursor: pointer;
-      color: #0a67c9;
-      font-weight: 500;
-      font-size: 1rem;
-      outline: none;
-    }
-
-    pre {
-      font-size: 0.85rem;
-      background: #f5f5f5;
-      border-radius: 0.5rem;
-      padding: 0.6rem 0.8rem;
-      margin-top: .5rem;
-      max-height: 180px;
-      overflow: auto;
-    }
-  }
-
-
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  max-height: 80vh;
+  overflow-y: auto;
+  transition: all 0.2s ease-in-out;
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, Observable, map } from 'rxjs';
+import { ForecastCacheService } from './forecast-cache.service';
 
 
 
@@ -15,8 +16,11 @@ export interface StationWeather {
   timezoneAbbreviation: string;
   elevation: number;
 
+  // 2-hour forecast
+  sg2hForecast: string | null;
+
   // Current
-  current?: {
+  current: {
     time: string;             // "2025-06-13T16:45"
     interval: number;        // seconds
     temperature: number;      // °C
@@ -36,7 +40,7 @@ export interface StationWeather {
 
   // Hourly for charts
   hourly: {
-    time: string;
+    time: string[];
     temperature2m: number[];
     windSpeed10m: number[];
   };
@@ -45,10 +49,12 @@ export interface StationWeather {
 
 @Injectable({ providedIn: 'root' })
 export class WeatherService {
-  private BASE_URL_METEO = 'https://api.open-meteo.com/v1/forecast';
-  private URL_SG_2H = 'https://api.data.gov.sg/v1/environment/2-hour-weather-forecast';
+  private readonly BASE_URL_METEO = 'https://api.open-meteo.com/v1/forecast';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private forecastCache: ForecastCacheService
+  ) { }
 
 
 
@@ -106,31 +112,15 @@ export class WeatherService {
         })
       );
 
-    const sg2h$ = this.http
-      .get<any>(this.URL_SG_2H)
-      .pipe(
-        map(res => {
-          console.debug(`[WeatherService] 2: sg2h$`, res);
-          console.debug(`[WeatherService] 3: res.items?.[0]?.forecasts`, res.items?.[0]?.forecasts);
-          return res;
-        }),
-        map(res => {
-          const forecasts = res.items?.[0]?.forecasts ?? [];
-          const found = forecasts.find((f: any) => f.area === stationName);
-          return found?.forecast ?? '[Unavailable]';
-        })
-      );
+    const sg2h$ = this.forecastCache.forArea(stationName);
 
     return forkJoin([meteo$, sg2h$]).pipe(
-      map(res => {
-        console.debug('[WeatherService][forkJoin] combined result', res);
-        return res;
-      }),
-      map(([meteo, sg2hForecast]) => ({
+      map(([meteo, sg2h]) => ({
         ...meteo,
-        sg2hForecast
+        sg2hForecast: sg2h ?? 'Unavailable'
       }))
     );
+
 
 
   }

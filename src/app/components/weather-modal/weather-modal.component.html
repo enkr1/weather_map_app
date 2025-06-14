@@ -1,0 +1,95 @@
+<div class="weather-modal" tabindex="0" aria-modal="true" role="dialog">
+  <!-- Header -->
+  <header class="wm-header">
+    <div class="wm-title-wrapper">
+      <h2>{{ name }}</h2>
+      <p class="wm-last-updated-tag">
+        Last updated at {{ data?.current?.time | date:'shortTime' }}.
+      </p>
+    </div>
+    <button class="wm-close" (click)="closeModal.emit()" aria-label="Close">&times;</button>
+  </header>
+
+
+  <section *ngIf="data; else noData" class="wm-body">
+    <!-- Quick Overview -->
+    <div class="wm-overview">
+      <div class="wm-stat wm-forecast">
+        <div class="icon">📍</div>
+        <div class="value">{{ data.sg2hForecast }}</div>
+        <div class="label">2-Hour Forecast</div>
+      </div>
+
+      <div class="wm-stat wm-temp">
+        <div class="icon">🌡️</div>
+        <div class="value">{{ data.current.temperature }}°C</div>
+        <div class="label">Temperature</div>
+      </div>
+      <div class="wm-stat wm-wind">
+        <div class="icon">💨</div>
+        <div class="value">{{ data.current.windspeed }} km/h</div>
+        <div class="label">Wind Speed</div>
+      </div>
+      <div class="wm-stat wm-direction">
+        <div class="icon">🧭</div>
+        <div class="value">{{ data.current.winddirection }}°</div>
+        <div class="label">Wind Dir.</div>
+      </div>
+    </div>
+
+    <!-- Additional Details -->
+    <div class="wm-details">
+      <div class="detail-item">
+        <strong>Coords:</strong>
+        {{ data.latitude.toFixed(4) }}, {{ data.longitude.toFixed(4) }}
+      </div>
+      <div class="detail-item">
+        <strong>Elevation:</strong>
+        {{ data.elevation }} m
+      </div>
+      <div class="detail-item">
+        <strong>Timezone:</strong>
+        {{ data.timezoneAbbreviation }} (UTC{{ data.utcOffsetSeconds/3600 | number:'1.0-0' }})
+      </div>
+      <div class="detail-item">
+        <strong>API Latency:</strong>
+        {{ data.generationtimeMs | number:'1.0-2' }} ms
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Hourly Temp Chart -->
+    <div class="wm-chart">
+      <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="lineChartType"></canvas>
+    </div>
+
+    <hr />
+
+
+    <!-- Hourly Snapshot -->
+    <div class="wm-hourly">
+      <h3>Next 12 Hours</h3>
+
+      <div class="hourly-grid">
+        <div class="hourly-cell" *ngFor="let t of data.hourly.time.slice(0,12); let i = index">
+          <div class="hour">{{ t | date:'HH:mm' }}</div>
+          <div class="hour-val">{{ data.hourly.temperature2m[i] }}°</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Debug Dump (dev only) -->
+    <details class="wm-debug">
+      <summary>Show Full Data</summary>
+      <pre>{{ data | json }}</pre>
+    </details>
+
+  </section>
+
+  <ng-template #noData>
+    <div class="modal-empty">
+      <p>❗ No data available for this station.</p>
+    </div>
+  </ng-template>
+</div>
