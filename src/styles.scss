@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 body {
-  padding: 0;
+  padding: 3rem;
   margin: 0;
   font-family: 'Inter', sans-serif;
 }
@@ -9,8 +9,8 @@ body {
 .loading-overlay {
   position: absolute;
   z-index: 9999;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -21,17 +21,19 @@ body {
   backdrop-filter: blur(.1rem);
 }
 
+
 /* === Reusable Frosted Glass Container === */
 .frosted-container {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(1rem);
+  border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow:
     0 25px 45px rgba(0, 0, 0, 0.1),
     0 8px 16px rgba(0, 0, 0, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  // transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: all 0.3s ease-in-out;
   overflow: auto;
 
   &::before {
@@ -62,8 +64,8 @@ body {
 /* Modal Container */
 app-weather-modal {
   position: absolute;
-  top: 1.3rem;
-  right: 1rem;
+  top: 1.5rem;
+  right: 0;
   z-index: 2999;
   width: 100%;
   max-width: 40vw;
@@ -78,4 +80,77 @@ app-weather-modal {
     max-width: 90vw;
     min-height: 95vh;
   }
+}
+
+// ---
+#map {
+  height: 80vh !important;
+  width: 80vw !important;
+  border-radius: 3rem;
+  overflow: hidden;
+  margin: auto;
+  border: 1px solid rgb(0, 0, 0, .2);
+  box-shadow:
+    0 25px 45px rgba(0, 0, 0, 0.3),
+    0 8px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.leaflet-control-container {
+  display: none;
+}
+
+.root-app-title {
+  text-align: center;
+
+  h1 {
+    margin: 0 0 3rem;
+  }
+}
+
+.root-app-title {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 0 1rem;
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.015em;
+
+    // Polished gradient text
+    background: linear-gradient(90deg, #007cf0, #00dfd8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    // Smooth fade-in with slight upward slide
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+  }
+}
+
+// 👇 Keyframe for fade+slide in
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.app-footer {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px);
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  color: #333;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  z-index: 999;
 }

@@ -83,6 +83,7 @@ export class WeatherModalComponent implements OnChanges {
       this.lineChartData.datasets[0].data = filteredTemps;
 
 
+
       this.chart?.update();
     }
   }
