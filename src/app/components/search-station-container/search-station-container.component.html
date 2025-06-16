@@ -1,1 +1,9 @@
-<p>search-station-container works!!!</p>
+<mat-form-field appearance="outline" class="frosted-container app-search-station-container borderless-input">
+  <input type="text" matInput [placeholder]="'Search station...'" [formControl]="ctrl" [matAutocomplete]="auto">
+
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelected($event.option.value)">
+    <mat-option *ngFor="let s of filtered$ | async" [value]="s">
+      {{ s.name }}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

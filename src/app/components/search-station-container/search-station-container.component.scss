@@ -1,0 +1,54 @@
+.app-search-station-container {
+  position: absolute;
+  bottom: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30%;
+  height: 3.5rem; // fixed
+  z-index: 8999;
+  background: rgba(255, 255, 255, 0.5);
+  overflow: hidden;
+
+  /* remove padding you already had */
+  .mat-mdc-text-field-wrapper {
+    padding: 0;
+  }
+
+  /* hide helper / error lines you already hid */
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none !important;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    border-radius: 3rem;
+  }
+
+  .mdc-notched-outline {
+    border-radius: 3rem;
+  }
+
+  /* 1️⃣ focus outline */
+  input.mat-input-element {
+    outline: none;
+  }
+
+  input.mat-input-element::-moz-focus-inner {
+    border: 0;
+  }
+
+  input:focus {
+    outline-width: 0;
+  }
+
+
+  /* 2️⃣ form-field underline / outline */
+  .mdc-line-ripple {
+    display: none !important;
+  }
+
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__trailing {
+    border: none;
+  }
+}

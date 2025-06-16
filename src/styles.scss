@@ -8,7 +8,7 @@ body {
 
 .loading-overlay {
   position: absolute;
-  z-index: 9999;
+  z-index: 99999;
   height: 100%;
   width: 100%;
   display: flex;
@@ -66,7 +66,7 @@ app-weather-modal {
   position: absolute;
   top: 1.5rem;
   right: 0;
-  z-index: 2999;
+  z-index: 9999;
   width: 100%;
   max-width: 40vw;
   max-height: 80vh;
@@ -84,8 +84,8 @@ app-weather-modal {
 
 // ---
 #map {
-  height: 80vh !important;
-  width: 80vw !important;
+  height: 75vh !important;
+  width: 70vw !important;
   border-radius: 3rem;
   overflow: hidden;
   margin: auto;
@@ -142,7 +142,7 @@ app-weather-modal {
 
 .app-footer {
   position: fixed;
-  bottom: 1rem;
+  bottom: 3rem;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(255, 255, 255, 0.5);
@@ -152,5 +152,37 @@ app-weather-modal {
   font-size: 0.85rem;
   color: #333;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  z-index: 999;
+}
+
+
+
+
+// ------- AUTO COMPLETE REMOVAL
+.borderless-input {
+
+  // kill the Material underline & outline
+  .mdc-line-ripple,
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__trailing,
+  .mdc-notched-outline__notch {
+    display: none !important;
+    border: none !important;
+  }
+
+  // remove default padding if you need an ultra-compact bar
+  .mat-mdc-text-field-wrapper {
+    padding: 0 1rem;
+  }
+
+  // hide the browser’s blue focus ring
+  input.mat-input-element {
+    outline: none;
+    /* Chrome / Edge / Safari */
+  }
+
+  input.mat-input-element::-moz-focus-inner {
+    border: 0;
+  }
+
+  /* Firefox */
 }
