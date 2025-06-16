@@ -86,15 +86,18 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
 
   private async loadAndInitMap() {
-    const L = await import('leaflet');
-    (globalThis as any).L = L; // Makes L global for the plugin
+    const leafletMod = await import('leaflet');
+    const L = leafletMod.default;
+    (globalThis as any).L = L;
 
+    // load the plugin *after* you’ve exposed L
     await import('leaflet.markercluster');
 
     // Thorough cleanup before initialisation
     this.clearMap();
 
     this.map = L.map('map').setView([1.3521, 103.8198], 11);
+
     L
       .tileLayer(
         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',

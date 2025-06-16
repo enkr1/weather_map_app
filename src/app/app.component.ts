@@ -36,9 +36,12 @@ export class AppComponent {
     this.mapComp.panToStation(st);
   }
 
-  closeModal() { this.picked = undefined; }
+  closeModal(): void {
+    this.picked = undefined;
+  }
 
   onMarkerClick(station: Station): void {
+    this.picked = station;
     console.debug('[DEBUG] Marker clicked:', station);
 
     this.weatherService

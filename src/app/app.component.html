@@ -12,13 +12,12 @@
 
 
   <app-weather-modal
-    *ngIf="weatherData"
-    [name]="weatherData.name"
-    [data]="weatherData"
+    *ngIf="picked"
     [ngClass]="'frosted-container'"
     [station]="picked"
-    (closeModal)="closeModal()"
-  >
+    (closeModal)="picked = undefined"
+    >
+    <!-- (closeModal)="closeModal()" -->
   </app-weather-modal>
 
 

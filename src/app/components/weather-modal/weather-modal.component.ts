@@ -25,18 +25,20 @@ Chart.register(...registerables, annotationPlugin);
   styleUrl: './weather-modal.component.scss',
 })
 export class WeatherModalComponent implements OnChanges, AfterViewInit {
-  @Input() name = '';
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
-
   @Input() station?: Station;
   @Output() closeModal = new EventEmitter<void>();
-  loadingWeather: boolean = true;
+
+  isLoadingWeather: boolean = true;
   stationWeather?: StationWeather;
+  @Input() data?: StationWeather;
   currentIndex = 0;
 
 
 
-  constructor(private ws: WeatherService) { }
+  constructor(private ws: WeatherService) {
+    this.isLoadingWeather = true;
+  }
 
 
 
@@ -84,86 +86,103 @@ export class WeatherModalComponent implements OnChanges, AfterViewInit {
     ],
   };
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     console.debug(`[DEBUG] ngOnChanges() called...`);
 
     if (!this.station) { return; }
-    this.loadingWeather = true;
-    console.debug(`[DEBUG] Fetching weather for ${this.station.name}...`, this.loadingWeather);
 
-    this.ws.fetchStationWeather(
-      this.station.lat,
-      this.station.lng,
-      this.station.name
-    )
+    this.isLoadingWeather = true;
+    console.debug(`[DEBUG] Fetching weather for ${this.station.name}...`, this.isLoadingWeather);
+
+    this.ws
+      .fetchStationWeather(
+        this.station.lat,
+        this.station.lng,
+        this.station.name,
+      )
       .subscribe({
-        next: d => this.stationWeather = d,
+        next: d => {
+          console.debug(`[DEBUG] next - Weather data received...`, d);
+          this.stationWeather = d
+          this.updateChart(d);
+        },
         error: err => {
           console.error(err);
-          this.stationWeather = undefined;   // display error banner if you wish
+          this.stationWeather = undefined;
         },
-        // complete: () => this.loadingWeather = false
-      });
-
-    console.debug(`[DEBUG] Fetching weather for ${this.station.name}...done`, this.loadingWeather);
-
-    let stationWeather = this.stationWeather;
-    if (stationWeather && stationWeather?.hourly) {
-      console.debug(`[DEBUG] Updating chart...`);
-
-      const allTimes = stationWeather.hourly.time;
-      const allTemps = stationWeather.hourly.temperature2m;
-
-      const now = new Date();
-      const todayStart = new Date(now);
-      todayStart.setHours(0, 0, 0, 0);
-
-      const tomorrowEnd = new Date(todayStart);
-      tomorrowEnd.setDate(todayStart.getDate() + 1);
-      tomorrowEnd.setHours(23, 59, 59, 999);
-
-      const filteredTimes: string[] = [];
-      const filteredTemps: number[] = [];
-
-      allTimes.forEach((iso, idx) => {
-        const t = new Date(iso);
-        if (t >= todayStart && t <= tomorrowEnd) {
-          filteredTimes.push(iso);
-          filteredTemps.push(allTemps[idx]);
+        complete: () => {
+          this.isLoadingWeather = false
+          console.debug('[DEBUG] complete', this.isLoadingWeather);
         }
       });
 
-      this.lineChartData.labels = filteredTimes.map((iso) =>
-        iso.slice(11, 16)
-      );
-      this.lineChartData.datasets[0].data = filteredTemps;
+    console.debug(`[DEBUG] Fetching weather for ${this.station.name}...done`, this.isLoadingWeather);
 
-      // Recompute filteredTimes & this.currentIndex...
-      const nowHour = new Date().getHours();
-      this.currentIndex = filteredTimes.findIndex(t => new Date(t).getHours() === nowHour);
-      if (this.currentIndex < 0) this.currentIndex = 0;
-
-      // Safely navigate the nested structure:
-      // Safely retrieve annotations
-      const annPlugin = this.lineChartOptions?.plugins?.annotation;
-      const anns = annPlugin?.annotations;
-
-      // If 'annotations' is an object (not an array), update nowLine
-      if (anns && !Array.isArray(anns) && 'nowLine' in anns) {
-        const line = (anns as Record<string, any>)['nowLine'];
-        line.xMin = this.currentIndex;
-        line.xMax = this.currentIndex;
-      }
-
-      this.chart?.update();
-
-    }
-
-    this.loadingWeather = false;
+    // if (!changes['data']) return;
+    // this.updateChart(this.data);
+    // this.isLoadingWeather = false;
   }
+
 
   ngAfterViewInit() {
     // Optional: ensure chart adjusts if modal opens
     setTimeout(() => this.chart?.update(), 0);
   }
+
+
+  private updateChart(stationWeather: StationWeather | undefined) {
+    if (!(stationWeather && stationWeather?.hourly)) {
+      return
+    }
+
+    console.debug(`[DEBUG] Updating chart...`);
+
+    const allTimes = stationWeather.hourly.time;
+    const allTemps = stationWeather.hourly.temperature2m;
+
+    const now = new Date();
+    const todayStart = new Date(now);
+    todayStart.setHours(0, 0, 0, 0);
+
+    const tomorrowEnd = new Date(todayStart);
+    tomorrowEnd.setDate(todayStart.getDate() + 1);
+    tomorrowEnd.setHours(23, 59, 59, 999);
+
+    const filteredTimes: string[] = [];
+    const filteredTemps: number[] = [];
+
+    allTimes.forEach((iso, idx) => {
+      const t = new Date(iso);
+      if (t >= todayStart && t <= tomorrowEnd) {
+        filteredTimes.push(iso);
+        filteredTemps.push(allTemps[idx]);
+      }
+    });
+
+    this.lineChartData.labels = filteredTimes.map((iso) =>
+      iso.slice(11, 16)
+    );
+    this.lineChartData.datasets[0].data = filteredTemps;
+
+    // Recompute filteredTimes & this.currentIndex...
+    const nowHour = new Date().getHours();
+    this.currentIndex = filteredTimes.findIndex(t => new Date(t).getHours() === nowHour);
+    if (this.currentIndex < 0) this.currentIndex = 0;
+
+    // Safely navigate the nested structure:
+    // Safely retrieve annotations
+    const annPlugin = this.lineChartOptions?.plugins?.annotation;
+    const anns = annPlugin?.annotations;
+
+    // If 'annotations' is an object (not an array), update nowLine
+    if (anns && !Array.isArray(anns) && 'nowLine' in anns) {
+      const line = (anns as Record<string, any>)['nowLine'];
+      line.xMin = this.currentIndex;
+      line.xMax = this.currentIndex;
+    }
+
+    this.chart?.update();
+    this.chart?.update();
+  }
+
 }

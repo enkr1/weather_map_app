@@ -15,7 +15,7 @@ body {
   justify-content: center;
   align-items: center;
   transition: all .3s ease-in-out;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.5);
   top: 0;
   left: 0;
   backdrop-filter: blur(.1rem);
@@ -69,6 +69,7 @@ app-weather-modal {
   z-index: 9999;
   width: 100%;
   max-width: 40vw;
+  min-height: 50vh;
   max-height: 80vh;
   overflow-y: auto;
 
@@ -142,16 +143,15 @@ app-weather-modal {
 
 .app-footer {
   position: fixed;
-  bottom: 3rem;
+  bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(8px);
   border-radius: 0.75rem;
   padding: 0.5rem 1rem;
   font-size: 0.85rem;
   color: #333;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+
+  @extend .frosted-container;
 }
 
 
