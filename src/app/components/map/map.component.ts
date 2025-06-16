@@ -16,13 +16,16 @@ import { ForecastCacheService } from '../../services/forecast-cache.service';
   selector: 'app-map',
   standalone: true,
   imports: [CommonModule],
-  template: `<div *ngIf="isBrowser" id="map" style="height:100vh;"></div>`,
+  templateUrl: './map.component.html',
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
-  isBrowser!: boolean;
   private map?: L.Map;
+  private markerIndex = new Map<string, L.Marker>();
+  private cluster?: any;
 
   @Output() stationClicked = new EventEmitter<Station>();
+
+  readonly isBrowser: boolean = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -57,6 +60,31 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  /** Called by the parent when the user chooses a station in search */
+  panToStation(st: Station): void {
+    console.debug(`[DEBUG] panToStation - Pan to ${st.name} (${st.lat}, ${st.lng})`);
+    console.debug('[DEBUG] panToStation - Requested station →', st);
+
+    const marker = this.markerIndex.get(st.name);
+    console.debug('[DEBUG] panToStation - marker? →', marker);
+    if (!marker || !this.map) { return; }
+    console.debug('[DEBUG] panToStation - Found marker →', marker);
+
+    this.cluster!.zoomToShowLayer(marker!, () => {
+      marker.openPopup();
+      if (this.map) this.map.setView(
+        marker.getLatLng(),
+        this.map.getZoom() + 1,
+        { animate: true }
+      );
+      // this.map!.panTo(marker.getLatLng(), { animate: true });
+    });
+
+    marker.openPopup();
+    this.stationClicked.emit(st);
+  }
+
+
   private async loadAndInitMap() {
     const L = await import('leaflet');
     (globalThis as any).L = L; // Makes L global for the plugin
@@ -82,7 +110,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       shadowUrl: 'marker-shadow.png',
     });
 
-    const cluster = L.markerClusterGroup();
+    this.cluster = L.markerClusterGroup();
 
     // Preloaded data
     const stations = await firstValueFrom(this.forecastCache.areaMetadata$);
@@ -91,11 +119,18 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       const marker = L
         .marker([s.lat, s.lng])
         .bindPopup(`<p style="text-align: center;">${s.name}</p>`)
-        .on('click', () => this.stationClicked.emit(s));
-      cluster.addLayer(marker);
+        .on('click', () => {
+          // zoom in by 3.
+          this.map?.setView(marker.getLatLng(), this.map.getZoom() + 3, { animate: true });
+          return this.stationClicked.emit(s)
+        });
+      this.cluster.addLayer(marker);
+      this.markerIndex.set(s.name, marker);
     });
 
 
-    this.map.addLayer(cluster);
+    this.map.addLayer(this.cluster);
   }
+
+
 }

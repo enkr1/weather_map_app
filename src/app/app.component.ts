@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WeatherService, StationWeather } from './services/weather.service';
 import { MapComponent } from './components/map/map.component';
@@ -25,14 +25,23 @@ import { SearchStationContainerComponent } from './components/search-station-con
 export class AppComponent {
   weatherData?: StationWeather & { name: string };
   weatherLoading: boolean = false;
+  @ViewChild('mapComp') mapComp!: MapComponent;
 
-  constructor(private weatherService: WeatherService) { }
+  constructor(private weatherService: WeatherService) {
+
+  }
+
+  onStationChosen(st: Station) {
+    this.mapComp.panToStation(st);
+    // this.openModal(st);
+  }
+
 
   onMarkerClick(station: Station): void {
-    console.debug('[App] Marker clicked:', station);
+    console.debug('[DEBUG] Marker clicked:', station);
 
     this.weatherLoading = true;
-    console.debug('[App] weatherLoading =', this.weatherLoading);
+    console.debug('[DEBUG] weatherLoading =', this.weatherLoading);
 
     this.weatherService
       .fetchStationWeather(
@@ -46,12 +55,12 @@ export class AppComponent {
         },
         error: err => {
           this.weatherLoading = false;
-          console.error('[App] Error fetching weather:', err);
+          console.error('[DEBUG] Error fetching weather:', err);
           alert('Error fetching weather data. Please try again later.');
         },
         complete: () => {
           this.weatherLoading = false;
-          console.debug('[App] weatherLoading =', this.weatherLoading);
+          console.debug('[DEBUG] weatherLoading =', this.weatherLoading);
         }
       });
   }

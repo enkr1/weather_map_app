@@ -2,7 +2,8 @@
 
 
 
-  <app-map (stationClicked)="onMarkerClick($event)"></app-map>
+  <app-map #mapComp (stationClicked)="onMarkerClick($event)"></app-map>
+  <!-- <app-map #map (stationClicked)="openModal($event)"></app-map> -->
 
 
 
@@ -13,14 +14,12 @@
 
   <app-forecast-dashboard></app-forecast-dashboard>
 
-  <app-weather-modal
-    *ngIf="weatherData"
-    [name]="weatherData.name"
-    [data]="weatherData"
-    [ngClass]="'frosted-container'"
+  <app-weather-modal *ngIf="weatherData" [name]="weatherData.name" [data]="weatherData" [ngClass]="'frosted-container'"
     (closeModal)="weatherData = undefined">
   </app-weather-modal>
 
-  <app-search-station-container></app-search-station-container>
+  <app-search-station-container (stationChosen)="onStationChosen($event)">
+    ></app-search-station-container>
+
 
 </div>
