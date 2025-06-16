@@ -74,7 +74,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       marker.openPopup();
       if (this.map) this.map.setView(
         marker.getLatLng(),
-        this.map.getZoom() + 1,
+        this.map.getZoom() + 3, // Zoom out +3, for a better view - no need for mini map.
         { animate: true }
       );
       // this.map!.panTo(marker.getLatLng(), { animate: true });

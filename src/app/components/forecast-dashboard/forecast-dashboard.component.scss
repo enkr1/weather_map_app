@@ -393,7 +393,7 @@
     position: relative;
     top: 0;
     left: 0;
-    margin: 1rem;
+    margin: 3rem 1rem;
     min-width: auto;
     max-width: none;
     padding: 1.5rem;
@@ -419,7 +419,7 @@
 @media (max-width: 480px) {
   .frosted-container.forecast-dashboard {
     padding: 1.25rem;
-    margin: 0.75rem;
+    margin: 3rem .75rem .75rem;
   }
 
   .dashboard-title {

@@ -117,10 +117,6 @@ export class WeatherModalComponent implements OnChanges, AfterViewInit {
       });
 
     console.debug(`[DEBUG] Fetching weather for ${this.station.name}...done`, this.isLoadingWeather);
-
-    // if (!changes['data']) return;
-    // this.updateChart(this.data);
-    // this.isLoadingWeather = false;
   }
 
 
