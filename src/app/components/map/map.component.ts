@@ -90,7 +90,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     stations.forEach(s => {
       const marker = L
         .marker([s.lat, s.lng])
-        .bindPopup(`<p>${s.name}</p>`)
+        .bindPopup(`<p style="text-align: center;">${s.name}</p>`)
         .on('click', () => this.stationClicked.emit(s));
       cluster.addLayer(marker);
     });
