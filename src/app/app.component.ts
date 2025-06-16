@@ -24,7 +24,7 @@ import { SearchStationContainerComponent } from './components/search-station-con
 
 export class AppComponent {
   weatherData?: StationWeather & { name: string };
-  weatherLoading: boolean = false;
+  picked?: Station;
   @ViewChild('mapComp') mapComp!: MapComponent;
 
   constructor(private weatherService: WeatherService) {
@@ -32,16 +32,14 @@ export class AppComponent {
   }
 
   onStationChosen(st: Station) {
+    this.picked = st;
     this.mapComp.panToStation(st);
-    // this.openModal(st);
   }
 
+  closeModal() { this.picked = undefined; }
 
   onMarkerClick(station: Station): void {
     console.debug('[DEBUG] Marker clicked:', station);
-
-    this.weatherLoading = true;
-    console.debug('[DEBUG] weatherLoading =', this.weatherLoading);
 
     this.weatherService
       .fetchStationWeather(
@@ -54,13 +52,11 @@ export class AppComponent {
           this.weatherData = { name: station.name, ...data };
         },
         error: err => {
-          this.weatherLoading = false;
           console.error('[DEBUG] Error fetching weather:', err);
           alert('Error fetching weather data. Please try again later.');
         },
         complete: () => {
-          this.weatherLoading = false;
-          console.debug('[DEBUG] weatherLoading =', this.weatherLoading);
+          console.debug('[DEBUG] complete');
         }
       });
   }

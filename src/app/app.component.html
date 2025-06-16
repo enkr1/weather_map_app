@@ -7,18 +7,25 @@
 
 
 
-  <!-- Loading overlay -->
-  <div *ngIf="weatherLoading" class="loading-overlay">
-    Loading..
-  </div>
-
   <app-forecast-dashboard></app-forecast-dashboard>
 
-  <app-weather-modal *ngIf="weatherData" [name]="weatherData.name" [data]="weatherData" [ngClass]="'frosted-container'"
-    (closeModal)="weatherData = undefined">
+
+
+  <app-weather-modal
+    *ngIf="weatherData"
+    [name]="weatherData.name"
+    [data]="weatherData"
+    [ngClass]="'frosted-container'"
+    [station]="picked"
+    (closeModal)="closeModal()"
+  >
   </app-weather-modal>
 
-  <app-search-station-container (stationChosen)="onStationChosen($event)">
+
+
+  <app-search-station-container
+    (stationChosen)="onStationChosen($event)"
+  >
     ></app-search-station-container>
 
 

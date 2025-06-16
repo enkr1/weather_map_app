@@ -9,12 +9,12 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StationWeather } from '../../services/weather.service';
+import { StationWeather, WeatherService } from '../../services/weather.service';
 import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
+import { Station } from '../../models/station';
 
-// ✅ Register Chart core + plugin ONCE here:
 Chart.register(...registerables, annotationPlugin);
 
 @Component({
@@ -26,11 +26,19 @@ Chart.register(...registerables, annotationPlugin);
 })
 export class WeatherModalComponent implements OnChanges, AfterViewInit {
   @Input() name = '';
-  @Input() data?: StationWeather;
-  @Output() closeModal = new EventEmitter<void>();
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
+  @Input() station?: Station;
+  @Output() closeModal = new EventEmitter<void>();
+  loadingWeather: boolean = true;
+  stationWeather?: StationWeather;
   currentIndex = 0;
+
+
+
+  constructor(private ws: WeatherService) { }
+
+
 
   public lineChartType: ChartType = 'line';
   public lineChartOptions: ChartConfiguration['options'] = {
@@ -76,10 +84,35 @@ export class WeatherModalComponent implements OnChanges, AfterViewInit {
     ],
   };
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['data'] && this.data?.hourly) {
-      const allTimes = this.data.hourly.time;
-      const allTemps = this.data.hourly.temperature2m;
+  ngOnChanges() {
+    console.debug(`[DEBUG] ngOnChanges() called...`);
+
+    if (!this.station) { return; }
+    this.loadingWeather = true;
+    console.debug(`[DEBUG] Fetching weather for ${this.station.name}...`, this.loadingWeather);
+
+    this.ws.fetchStationWeather(
+      this.station.lat,
+      this.station.lng,
+      this.station.name
+    )
+      .subscribe({
+        next: d => this.stationWeather = d,
+        error: err => {
+          console.error(err);
+          this.stationWeather = undefined;   // display error banner if you wish
+        },
+        // complete: () => this.loadingWeather = false
+      });
+
+    console.debug(`[DEBUG] Fetching weather for ${this.station.name}...done`, this.loadingWeather);
+
+    let stationWeather = this.stationWeather;
+    if (stationWeather && stationWeather?.hourly) {
+      console.debug(`[DEBUG] Updating chart...`);
+
+      const allTimes = stationWeather.hourly.time;
+      const allTemps = stationWeather.hourly.temperature2m;
 
       const now = new Date();
       const todayStart = new Date(now);
@@ -122,8 +155,11 @@ export class WeatherModalComponent implements OnChanges, AfterViewInit {
         line.xMax = this.currentIndex;
       }
 
-        this.chart?.update();
+      this.chart?.update();
+
     }
+
+    this.loadingWeather = false;
   }
 
   ngAfterViewInit() {
