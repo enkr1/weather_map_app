@@ -61,6 +61,45 @@ body {
 
 }
 
+
+.root-app-title {
+  text-align: center;
+  margin-bottom: 5rem;
+  padding: 0 1rem;
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.015em;
+
+    // Polished gradient text
+    background: linear-gradient(90deg, #007cf0, #00dfd8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    // Smooth fade-in with slight upward slide
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+  }
+}
+
+// 👇 Keyframe for fade+slide in
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+app-map {
+  margin: 3rem 0 0;
+  display: block;
+}
+
 /* Modal Container */
 app-weather-modal {
   position: absolute;
@@ -109,37 +148,6 @@ app-weather-modal {
   }
 }
 
-.root-app-title {
-  text-align: center;
-  margin-bottom: 3rem;
-  padding: 0 1rem;
-
-  h1 {
-    margin: 0;
-    font-size: clamp(1.75rem, 4vw, 2.75rem);
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: 0.015em;
-
-    // Polished gradient text
-    background: linear-gradient(90deg, #007cf0, #00dfd8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-
-    // Smooth fade-in with slight upward slide
-    opacity: 0;
-    transform: translateY(10px);
-    animation: fadeSlideIn 0.8s ease-out forwards;
-  }
-}
-
-// 👇 Keyframe for fade+slide in
-@keyframes fadeSlideIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 .app-footer {
   position: fixed;
@@ -153,6 +161,7 @@ app-weather-modal {
 
   @extend .frosted-container;
 }
+
 
 
 

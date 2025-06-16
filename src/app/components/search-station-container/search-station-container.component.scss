@@ -1,12 +1,14 @@
 .app-search-station-container {
   position: absolute;
-  bottom: -1.5rem;
+  // bottom: -1.5rem;
+  top: -1.8rem;
   left: 50%;
   transform: translateX(-50%);
-  width: 30%;
+  width: fit-content;
   height: 3.5rem; // fixed
   z-index: 8999;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid #8686865a;
   overflow: hidden;
 
   /* remove padding you already had */
@@ -25,6 +27,10 @@
 
   .mdc-notched-outline {
     border-radius: 3rem;
+  }
+
+  input {
+    text-align: center;
   }
 
   /* 1️⃣ focus outline */

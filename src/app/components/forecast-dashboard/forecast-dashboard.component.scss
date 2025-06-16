@@ -7,6 +7,12 @@
   min-width: 15vw;
   max-width: 18vw;
   z-index: 1001;
+
+  // smaller desktop to have min width of 20vw
+  @media screen and (max-width: 1280px) {
+    min-width: 20vw;
+    max-width: 30vw;
+  }
 }
 
 /* Dashboard Header */
