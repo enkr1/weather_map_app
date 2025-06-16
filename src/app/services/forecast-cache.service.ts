@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { firstValueFrom, Observable, ReplaySubject } from 'rxjs';
-import { tap, shareReplay } from 'rxjs/operators';
+import { firstValueFrom, Observable, of, ReplaySubject } from 'rxjs';
+import { tap, shareReplay, catchError } from 'rxjs/operators';
 import { map } from 'rxjs/operators';
+import { stations } from '../models/station';
 
 export interface TwoHourForecastItem {
   area: string;
@@ -36,17 +37,39 @@ export class ForecastCacheService {
   // ReplaySubject will cache the last emitted value for any
   // subscribers, even if they subscribe after the HTTP has completed.
   private cache$ = new ReplaySubject<TwoHourForecastResponse>(1);
+  private fallback: TwoHourForecastResponse = {
+    area_metadata: stations.map(s => ({
+      name: s.name,
+      label_location: { latitude: s.lat, longitude: s.lng }
+    })),
+    items: [{
+      update_timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString(),
+      valid_period: { start: '', end: '' },
+      forecasts: stations.map(s => ({
+        area: s.name,
+        forecast: '[Offline] Recovering ...'
+      }))
+    }]
+  };
+
+
 
   constructor(private http: HttpClient) {
     this.load();  // Kick off the fetch immediately
   }
+
+
 
   /** Fetch and cache the forecast once */
   private load(): void {
     this.http.get<TwoHourForecastResponse>(this.URL)
       .pipe(
         tap(res => console.debug('[ForecastCache] Loaded', res)),
-        // shareReplay not needed here because we push into cache$
+        catchError(error => {
+          console.error('[ForecastCache] Load failed:', error);
+          return of(this.fallback);
+        }),
       )
       .subscribe(this.cache$);
   }

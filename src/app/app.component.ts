@@ -5,6 +5,7 @@ import { MapComponent } from './components/map/map.component';
 import { WeatherModalComponent } from './components/weather-modal/weather-modal.component';
 import { Station } from './models/station';
 import { ForecastDashboardComponent } from './components/forecast-dashboard/forecast-dashboard.component';
+import { SearchStationContainerComponent } from './components/search-station-container/search-station-container.component';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ import { ForecastDashboardComponent } from './components/forecast-dashboard/fore
     MapComponent,
     WeatherModalComponent,
     ForecastDashboardComponent,
+    SearchStationContainerComponent,
   ],
   templateUrl: "./app.component.html",
 })
@@ -43,7 +45,9 @@ export class AppComponent {
           this.weatherData = { name: station.name, ...data };
         },
         error: err => {
+          this.weatherLoading = false;
           console.error('[App] Error fetching weather:', err);
+          alert('Error fetching weather data. Please try again later.');
         },
         complete: () => {
           this.weatherLoading = false;
