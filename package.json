@@ -27,7 +27,7 @@
     "angular-ng-autocomplete": "^2.0.12",
     "chart.js": "^4.4.9",
     "chartjs-plugin-annotation": "^3.1.0",
-    "express": "^4.18.2",
+    "express": "^4.22.1",
     "leaflet": "^1.9.4",
     "leaflet-providers": "^2.0.0",
     "leaflet.markercluster": "^1.5.3",
